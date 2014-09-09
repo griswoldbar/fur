@@ -33,9 +33,11 @@ module Fur
     def make_inferences(new_fact)
       related = @fact_repo.find_related(new_fact)
       if new_fact.code == 'all'
-        related.select {|fact| fact.middle == new_fact.predicate }.each do |fact|
+        related.select {|fact| (fact.middle == new_fact.predicate) && (fact.code == new_fact.code)}.each do |fact|
           @fact_repo << Fact.new('all', new_fact.middle, fact.predicate, true)
+          @fact_repo << Fact.new('some', new_fact.middle, fact.predicate, true)
           @fact_repo << Fact.new('some_not', new_fact.middle, fact.predicate, false)
+          @fact_repo << Fact.new('no', new_fact.middle, fact.predicate, false)
         end
       end
     end

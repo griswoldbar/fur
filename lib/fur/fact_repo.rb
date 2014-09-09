@@ -16,7 +16,7 @@ module Fur
 
     def find(other_fact)
       @facts.find do |fact|
-        (fact.middle == other_fact.middle) && (other_fact.predicate == other_fact.predicate) && (fact.code == other_fact.code)
+        (fact.middle == other_fact.middle) && (fact.predicate == other_fact.predicate) && (fact.code == other_fact.code)
       end
     end
   end

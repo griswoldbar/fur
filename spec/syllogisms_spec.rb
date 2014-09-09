@@ -2,32 +2,55 @@ require 'spec_helper'
 
 describe Fur do
   let(:fact_repo)                { Fur::FactRepo.new }
-  let(:question_handler_factory) { Fur::QuestionHandler::Factory }
-  let(:reasoner)                 { Fur::Reasoner.new(fact_repo, question_handler_factory) }
+  let(:reasoner)                 { Fur::Reasoner.new(fact_repo) }
   let(:handler)                  { Fur::Handler.new(reasoner) }
 
-  describe "Barbara / Barbari" do
+  describe "'All' questions (Barbara / Barbari)" do
     before(:each) do
-      handler.handle("All men are stupid")
       handler.handle("All men are mortal")
       handler.handle("All Greeks are men")
-      handler.handle("All cats are cute")
-      handler.handle("All cats are mortal")
     end
-    it "infers SaP" do
-      expect(handler.handle("Are all Greeks mortal?")).to eql "Yes"
+    describe "correct inferences" do
+      it "infers SaP" do
+        expect(handler.handle("Are all Greeks mortal?")).to eql "Yes"
+      end
+
+      it "infers not-SeP " do
+        expect(handler.handle("Are no Greeks mortal?")).to eql "No"
+      end
+
+      it "infers SiP" do
+        expect(handler.handle("Are some Greeks mortal?")).to eql "Yes"
+      end
+
+      it "infers not-SoP" do
+        expect(handler.handle("Are some Greeks not mortal?")).to eql "No"
+      end
+    end
+  end
+
+  describe "'No' questions (Celarent)" do
+    before(:each) do
+      handler.handle("No cats are ugly")
+      handler.handle("All Birmans are cats")
     end
 
-    it "infers not-SeP " do
-      expect(handler.handle("Are no Greeks mortal?")).to eql "No"
-    end
+    describe "correct inferences" do
+      it "infers SeP" do
+        expect(handler.handle("Are no Birmans ugly?")).to eql "Yes"
+      end
 
-    it "infers SiP" do
-      expect(handler.handle("Are some Greeks mortal?")).to eql "Yes"
-    end
+      it "infers not-SaP " do
+        expect(handler.handle("Are all Birmans ugly?")).to eql "No"
+      end
 
-    it "infers not-SoP" do
-      expect(handler.handle("Are some Greeks not mortal?")).to eql "No"
+      it "infers SoP" do
+        expect(handler.handle("Are some Birmans not ugly?")).to eql "Yes"
+      end
+
+      it "infers not-SiP" do
+        expect(handler.handle("Are some Birmans ugly?")).to eql "No"
+      end
     end
   end
 end

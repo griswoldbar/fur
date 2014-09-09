@@ -1,22 +1,26 @@
 require "fur/fact"
-require "fur/question"
 module Fur
   class Handler
-    def initialize(reasoner)
+    def initialize(reasoner, outputter=self)
       @reasoner = reasoner
+      @outputter = outputter
     end
 
     def handle(input)
       input.downcase!
+      fact = Fact.from_input(input)
       if input.match(/.*\?$/)
-        question = Question.new(input)
-        answer = @reasoner.answer(question)
-        puts answer
+        answer = @reasoner.answer(fact)
+        @outputter.output(answer)
       else
-        fact = Fact.from_input(input)
         @reasoner.add_fact(fact)
       end
     #rescue validation errors with error message
     end
+
+    def output(text)
+      text
+    end
   end
+
 end
